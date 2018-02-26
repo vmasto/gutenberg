@@ -8,7 +8,7 @@ import { findKey, isFinite, map, omit } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { concatChildren, Component, RawHTML } from '@wordpress/element';
+import { concatChildren, Component, compose, RawHTML } from '@wordpress/element';
 import {
 	PanelBody,
 	PanelColor,
@@ -34,6 +34,7 @@ import RichText from '../../rich-text';
 import InspectorControls from '../../inspector-controls';
 import ColorPalette from '../../color-palette';
 import ContrastChecker from '../../contrast-checker';
+import { getColorClass, withColors } from '../../colors';
 
 const { getComputedStyle } = window;
 
@@ -122,6 +123,7 @@ class ParagraphBlock extends Component {
 			mergeBlocks,
 			onReplace,
 			className,
+			initializeColor,
 			fallbackBackgroundColor,
 			fallbackTextColor,
 			fallbackFontSize,
@@ -132,12 +134,21 @@ class ParagraphBlock extends Component {
 			content,
 			dropCap,
 			placeholder,
-			backgroundColor,
-			textColor,
 			width,
 		} = attributes;
 
 		const fontSize = this.getFontSize();
+
+		const textColor = initializeColor( {
+			colorContext: 'text',
+			colorAttribute: 'textColor',
+			customColorAttribute: 'customTextColor',
+		} );
+		const backgroundColor = initializeColor( {
+			colorContext: 'background',
+			colorAttribute: 'backgroundColor',
+			customColorAttribute: 'customBackgroundColor',
+		} );
 
 		return [
 			isSelected && (
@@ -196,22 +207,22 @@ class ParagraphBlock extends Component {
 							onChange={ this.toggleDropCap }
 						/>
 					</PanelBody>
-					<PanelColor title={ __( 'Background Color' ) } colorValue={ backgroundColor } initialOpen={ false }>
+					<PanelColor title={ __( 'Background Color' ) } colorValue={ backgroundColor.value } initialOpen={ false }>
 						<ColorPalette
-							value={ backgroundColor }
-							onChange={ ( colorValue ) => setAttributes( { backgroundColor: colorValue } ) }
+							value={ backgroundColor.value }
+							onChange={ backgroundColor.set }
 						/>
 					</PanelColor>
-					<PanelColor title={ __( 'Text Color' ) } colorValue={ textColor } initialOpen={ false }>
+					<PanelColor title={ __( 'Text Color' ) } colorValue={ textColor.value } initialOpen={ false }>
 						<ColorPalette
-							value={ textColor }
-							onChange={ ( colorValue ) => setAttributes( { textColor: colorValue } ) }
+							value={ textColor.value }
+							onChange={ textColor.set }
 						/>
 					</PanelColor>
 					<ContrastChecker
+						textColor={ textColor.value }
+						backgroundColor={ backgroundColor.value }
 						{ ...{
-							textColor,
-							backgroundColor,
 							fallbackBackgroundColor,
 							fallbackTextColor,
 						} }
@@ -229,12 +240,14 @@ class ParagraphBlock extends Component {
 				<RichText
 					tagName="p"
 					className={ classnames( 'wp-block-paragraph', className, {
-						'has-background': backgroundColor,
+						'has-background': backgroundColor.value,
 						'has-drop-cap': dropCap,
+						[ backgroundColor.class ]: backgroundColor.class,
+						[ textColor.class ]: textColor.class,
 					} ) }
 					style={ {
-						backgroundColor: backgroundColor,
-						color: textColor,
+						backgroundColor: ! backgroundColor.class && backgroundColor.value,
+						color: ! textColor.class && textColor.value,
 						fontSize: fontSize ? fontSize + 'px' : undefined,
 						textAlign: align,
 					} }
@@ -293,7 +306,13 @@ const schema = {
 	textColor: {
 		type: 'string',
 	},
+	customTextColor: {
+		type: 'string',
+	},
 	backgroundColor: {
+		type: 'string',
+	},
+	customBackgroundColor: {
 		type: 'string',
 	},
 	fontSize: {
@@ -406,7 +425,10 @@ export const settings = {
 		}
 	},
 
-	edit: FallbackStyles( ParagraphBlock ),
+	edit: compose(
+		withColors,
+		FallbackStyles,
+	)( ParagraphBlock ),
 
 	save( { attributes } ) {
 		const {
@@ -416,21 +438,29 @@ export const settings = {
 			dropCap,
 			backgroundColor,
 			textColor,
+			customBackgroundColor,
+			customTextColor,
 			fontSize,
 			customFontSize,
 		} = attributes;
 
+		const textClass = getColorClass( 'text', textColor );
+		const backgroundClass = getColorClass( 'background', backgroundColor );
+		const fontSizeClass = fontSize && FONT_SIZES[ fontSize ] && `is-${ fontSize }-text`;
+
 		const className = classnames( {
 			[ `align${ width }` ]: width,
-			'has-background': backgroundColor,
+			'has-background': backgroundColor || customBackgroundColor,
 			'has-drop-cap': dropCap,
-			[ `is-${ fontSize }-text` ]: fontSize && FONT_SIZES[ fontSize ],
+			[ fontSizeClass ]: fontSizeClass,
+			[ textClass ]: textClass,
+			[ backgroundClass ]: backgroundClass,
 		} );
 
 		const styles = {
-			backgroundColor: backgroundColor,
-			color: textColor,
-			fontSize: ! fontSize && customFontSize ? customFontSize : undefined,
+			backgroundColor: ! backgroundClass && customBackgroundColor,
+			color: ! textClass && customTextColor,
+			fontSize: ! fontSizeClass && customFontSize,
 			textAlign: align,
 		};
 
