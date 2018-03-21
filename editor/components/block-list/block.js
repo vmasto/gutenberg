@@ -59,6 +59,7 @@ export class BlockListBlock extends Component {
 		this.setBlockListRef = this.setBlockListRef.bind( this );
 		this.bindBlockNode = this.bindBlockNode.bind( this );
 		this.setAttributes = this.setAttributes.bind( this );
+		this.setIsSelected = this.setIsSelected.bind( this );
 		this.maybeHover = this.maybeHover.bind( this );
 		this.hideHoverEffects = this.hideHoverEffects.bind( this );
 		this.mergeBlocks = this.mergeBlocks.bind( this );
@@ -202,6 +203,27 @@ export class BlockListBlock extends Component {
 				...this.props.meta,
 				...metaAttributes,
 			} );
+		}
+	}
+
+	/**
+	 * Sets a block as selected or unselected, if not already in the intended
+	 * condition.
+	 *
+	 * @param {boolean} nextIsSelected Whether block is to be selected.
+	 */
+	setIsSelected( nextIsSelected = true ) {
+		const { isSelected, onSelect, onDeselect } = this.props;
+
+		// No need to act if already in desired condition.
+		if ( isSelected === nextIsSelected ) {
+			return;
+		}
+
+		if ( nextIsSelected ) {
+			onSelect();
+		} else {
+			onDeselect();
 		}
 	}
 
@@ -543,6 +565,7 @@ export class BlockListBlock extends Component {
 							<BlockEdit
 								name={ blockName }
 								isSelected={ isSelected }
+								setIsSelected={ this.setIsSelected }
 								attributes={ block.attributes }
 								setAttributes={ this.setAttributes }
 								insertBlocksAfter={ isLocked ? undefined : this.insertBlocksAfter }
@@ -636,6 +659,7 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps ) => {
 	const {
 		updateBlockAttributes,
 		selectBlock,
+		clearSelectedBlock,
 		insertBlocks,
 		removeBlock,
 		mergeBlocks,
@@ -643,6 +667,7 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps ) => {
 		editPost,
 		toggleSelection,
 	} = dispatch( 'core/editor' );
+
 	return {
 		onChange( uid, attributes ) {
 			updateBlockAttributes( uid, attributes );
@@ -674,6 +699,7 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps ) => {
 		toggleSelection( selectionEnabled ) {
 			toggleSelection( selectionEnabled );
 		},
+		onDeselect: clearSelectedBlock,
 	};
 } );
 
