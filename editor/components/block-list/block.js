@@ -639,6 +639,7 @@ const applyWithSelect = withSelect( ( select, { uid, rootUID } ) => {
 		isSelectionEnabled,
 		getSelectedBlocksInitialCaretPosition,
 		getBlockSelectionEnd,
+		getKeyboardMode,
 	} = select( 'core/editor' );
 	const isSelected = isBlockSelected( uid );
 	return {
@@ -657,6 +658,7 @@ const applyWithSelect = withSelect( ( select, { uid, rootUID } ) => {
 		mode: getBlockMode( uid ),
 		isSelectionEnabled: isSelectionEnabled(),
 		initialPosition: getSelectedBlocksInitialCaretPosition(),
+		keyboardMode: getKeyboardMode(),
 		isSelected,
 	};
 } );
@@ -671,6 +673,7 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps ) => {
 		replaceBlocks,
 		editPost,
 		toggleSelection,
+		setKeyboardMode,
 	} = dispatch( 'core/editor' );
 	return {
 		onChange( uid, attributes ) {
@@ -702,6 +705,9 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps ) => {
 		},
 		toggleSelection( selectionEnabled ) {
 			toggleSelection( selectionEnabled );
+		},
+		onChangeKeyboardMode( mode ) {
+			setKeyboardMode( mode );
 		},
 	};
 } );

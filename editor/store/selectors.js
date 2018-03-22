@@ -1516,3 +1516,14 @@ export function isPublishingPost( state ) {
 export function getProvisionalBlockUID( state ) {
 	return state.provisionalBlockUID;
 }
+
+/**
+ * Returns the current keyboard mode.
+ *
+ * @param {Object} state Editor state.
+ *
+ * @return {string}      Keyboard Mode
+ */
+export function getKeyboardMode( state ) {
+	return state.keyboardMode;
+}
