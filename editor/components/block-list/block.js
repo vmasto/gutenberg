@@ -429,6 +429,7 @@ export class BlockListBlock extends Component {
 			isTypingWithinBlock,
 			isMultiSelecting,
 			hoverArea,
+			keyboardMode,
 		} = this.props;
 		const isHovered = this.state.isHovered && ! isMultiSelecting;
 		const { name: blockName, isValid } = block;
@@ -440,16 +441,17 @@ export class BlockListBlock extends Component {
 
 		// If the block is selected and we're typing the block should not appear.
 		// Empty paragraph blocks should always show up as unselected.
+		const isKeyboardMode = keyboardMode === 'edit';
 		const isEmptyDefaultBlock = isUnmodifiedDefaultBlock( block );
 		const isSelectedNotTyping = isSelected && ! isTypingWithinBlock;
 		const showSideInserter = ( isSelected || isHovered ) && isEmptyDefaultBlock;
 		const shouldAppearSelected = ! showSideInserter && isSelectedNotTyping;
 		// We render block movers and block settings to keep them tabbale even if hidden
-		const shouldRenderMovers = ( isSelected || hoverArea === 'left' ) && ! showSideInserter && ! isMultiSelecting && ! isMultiSelected;
-		const shouldRenderBlockSettings = ( isSelected || hoverArea === 'right' ) && ! showSideInserter && ! isMultiSelecting && ! isMultiSelected;
+		const shouldRenderMovers = isKeyboardMode && ( isSelected || hoverArea === 'left' ) && ! showSideInserter && ! isMultiSelecting && ! isMultiSelected;
+		const shouldRenderBlockSettings = isKeyboardMode && ( isSelected || hoverArea === 'right' ) && ! showSideInserter && ! isMultiSelecting && ! isMultiSelected;
 		const shouldShowBreadcrumb = isHovered;
-		const shouldShowContextualToolbar = shouldAppearSelected && isValid && showContextualToolbar;
-		const shouldShowMobileToolbar = shouldAppearSelected;
+		const shouldShowContextualToolbar = isKeyboardMode && shouldAppearSelected && isValid && showContextualToolbar;
+		const shouldShowMobileToolbar = isKeyboardMode && shouldAppearSelected;
 		const { error, dragging } = this.state;
 
 		// Insertion point can only be made visible when the side inserter is
