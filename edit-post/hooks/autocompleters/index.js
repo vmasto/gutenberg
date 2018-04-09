@@ -7,7 +7,7 @@ import { find } from 'lodash';
  * WordPress dependencies.
  */
 import { addFilter } from '@wordpress/hooks';
-import { select } from '@wordpress/data';
+import { select, dispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 
 // Export for unit test
@@ -15,7 +15,6 @@ export function getBlockOptions( query ) {
 	const editor = select( 'core/editor' );
 	const isInitialQuery = ! query;
 
-	// TODO: Fetch reusable blocks if necessary (they aren't fetched initially)
 	return isInitialQuery ?
 		// Before we have a query, offer frecent blocks as a sensible default.
 		editor.getFrecentInserterItems() :
@@ -37,6 +36,9 @@ export function addReusableBlocksCompletion( completers ) {
 	if ( blocksCompleter ) {
 		blocksCompleter.options = getBlockOptions;
 		blocksCompleter.getOptionCompletion = getBlockCompletion;
+
+		// Fetch shared block data so it will be available to this completer later.
+		dispatch( 'core/editor' ).fetchSharedBlocks();
 	}
 
 	return completers;
