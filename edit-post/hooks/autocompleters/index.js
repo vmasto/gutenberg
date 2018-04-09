@@ -1,4 +1,9 @@
 /**
+ * External dependencies.
+ */
+import { find } from 'lodash';
+
+/**
  * WordPress dependencies.
  */
 import { addFilter } from '@wordpress/hooks';
@@ -28,7 +33,7 @@ export function getBlockCompletion( inserterItem ) {
 
 // Export for unit test
 export function addReusableBlocksCompletion( completers ) {
-	const blocksCompleter = completers.find( c => 'blocks' === c.name );
+	const blocksCompleter = find( completers, c => 'blocks' === c.name );
 	if ( blocksCompleter ) {
 		blocksCompleter.options = getBlockOptions;
 		blocksCompleter.getOptionCompletion = getBlockCompletion;
