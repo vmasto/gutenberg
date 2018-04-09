@@ -231,7 +231,6 @@ export const settings = {
 				attributes,
 				isSelected,
 				insertBlocksAfter,
-				setAttributes,
 				mergeBlocks,
 				onReplace,
 				className,
@@ -282,7 +281,7 @@ export const settings = {
 					onMerge={ mergeBlocks }
 					onSplit={
 						insertBlocksAfter ?
-							( before, after, ...blocks ) => {
+							( after, ...blocks ) => {
 								if ( ! blocks.length ) {
 									blocks.push( createBlock( 'core/paragraph' ) );
 								}
@@ -294,7 +293,6 @@ export const settings = {
 									} ) );
 								}
 
-								setAttributes( { values: before } );
 								insertBlocksAfter( blocks );
 							} :
 							undefined

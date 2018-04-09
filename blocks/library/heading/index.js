@@ -153,8 +153,7 @@ export const settings = {
 				onMerge={ mergeBlocks }
 				onSplit={
 					insertBlocksAfter ?
-						( before, after, ...blocks ) => {
-							setAttributes( { content: before } );
+						( after, ...blocks ) => {
 							insertBlocksAfter( [
 								...blocks,
 								createBlock( 'core/paragraph', { content: after } ),

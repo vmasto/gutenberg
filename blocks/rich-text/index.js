@@ -649,9 +649,6 @@ export class RichText extends Component {
 			return memo;
 		}, [] );
 
-		// Splitting into two blocks
-		this.setContent( this.props.value );
-
 		this.restoreContentAndSplit(
 			nodeListToReact( before, createTinyMCEElement ),
 			nodeListToReact( after, createTinyMCEElement )
@@ -780,15 +777,15 @@ export class RichText extends Component {
 
 	/**
 	 * Calling onSplit means we need to abort the change done by TinyMCE.
-	 * we need to call updateContent to restore the initial content before calling onSplit.
+	 * we need to call setContent to restore the initial content before calling onSplit.
 	 *
 	 * @param {Array}  before content before the split position
 	 * @param {Array}  after  content after the split position
 	 * @param {?Array} blocks blocks to insert at the split position
 	 */
 	restoreContentAndSplit( before, after, blocks = [] ) {
-		this.updateContent();
-		this.props.onSplit( before, after, ...blocks );
+		this.setContent( before );
+		this.props.onSplit( after, ...blocks );
 	}
 
 	render() {
