@@ -46,18 +46,6 @@ export const settings = {
 
 	attributes: blockAttributes,
 
-	transforms: {
-		to: [
-			{
-				type: 'unwrap',
-				transform: ( { citation }, innerBlocks ) => [
-					...innerBlocks,
-					createBlock( 'core/paragraph', { content: citation } ),
-				],
-			},
-		],
-	},
-
 	getEditWrapperProps( attributes ) {
 		const { align } = attributes;
 		if ( 'left' === align || 'right' === align || 'wide' === align || 'full' === align ) {

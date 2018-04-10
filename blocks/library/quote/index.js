@@ -73,15 +73,6 @@ export const settings = {
 				},
 			},
 		],
-		to: [
-			{
-				type: 'unwrap',
-				transform: ( { citation }, innerBlocks ) => [
-					...innerBlocks,
-					createBlock( 'core/paragraph', { content: citation } ),
-				],
-			},
-		],
 	},
 
 	edit: withState( {
