@@ -31,9 +31,9 @@ a traditional `input` field, usually when the user exits the field.
 
 *Optional.* By default, a line break will be inserted on <kbd>Enter</kbd>. If the editable field can contain multiple paragraphs, this property can be set to `p` to create new paragraphs on <kbd>Enter</kbd>.
 
-### `onSplit( after: Array, ...blocks: Object ): Function`
+### `onSplit( before: Array, after: Array, ...blocks: Object ): Function`
 
-*Optional.* Called when the content can be split with `after`. There might be blocks present, which should be inserted in before.
+*Optional.* Called when the content can be split with `after` as the split off value. There might be blocks present, which should be inserted before the `after` value. Note: the `before` value should no longer be used.
 
 ### `onReplace( blocks: Array ): Function`
 

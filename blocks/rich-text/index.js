@@ -785,7 +785,7 @@ export class RichText extends Component {
 	 */
 	restoreContentAndSplit( before, after, blocks = [] ) {
 		this.setContent( before );
-		this.props.onSplit( after, ...blocks );
+		this.props.onSplit( before, after, ...blocks );
 	}
 
 	render() {

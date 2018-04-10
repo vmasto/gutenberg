@@ -281,7 +281,7 @@ export const settings = {
 					onMerge={ mergeBlocks }
 					onSplit={
 						insertBlocksAfter ?
-							( after, ...blocks ) => {
+							( unused, after, ...blocks ) => {
 								if ( ! blocks.length ) {
 									blocks.push( createBlock( 'core/paragraph' ) );
 								}
