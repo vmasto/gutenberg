@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import './store';
 import './hooks';
 
 // A "block" is the abstract term used to describe units of markup that,
