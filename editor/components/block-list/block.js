@@ -654,6 +654,10 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps ) => {
 
 			blocks = blocks.map( ( oldBlock ) => cloneBlock( oldBlock, { layout } ) );
 
+			// If the current block is the last nested empty paragraph block,
+			// and we're about to insert another empty paragraph block, then
+			// move the empty paragraph block behind the wrapping block.
+			// This is a way for the user to escape out of wrapping blocks.
 			if (
 				rootUID && isLast && blocks.length === 1 &&
 				isUnmodifiedDefaultBlock( first( blocks ) ) &&
