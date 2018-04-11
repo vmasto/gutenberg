@@ -193,7 +193,7 @@ class ImageBlock extends Component {
 
 		const classes = classnames( className, {
 			'is-transient': 0 === url.indexOf( 'blob:' ),
-			'is-resized': !! width,
+			'is-resized': !! width || !! height,
 			'is-focused': isSelected,
 		} );
 
@@ -299,7 +299,11 @@ class ImageBlock extends Component {
 						const img = <img src={ url } alt={ alt } onClick={ this.onImageClick } />;
 
 						if ( ! isResizable || ! imageWidthWithinContainer ) {
-							return img;
+							return (
+								<div style={ { width, height } }>
+									{ img }
+								</div>
+							);
 						}
 
 						const currentWidth = width || imageWidthWithinContainer;
