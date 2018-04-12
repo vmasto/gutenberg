@@ -5,7 +5,7 @@ import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { keycodes } from '@wordpress/utils';
 
-const { BACKSPACE, DELETE } = keycodes;
+const { BACKSPACE, DELETE, F10 } = keycodes;
 
 function isTmceEmpty( editor ) {
 	// When tinyMce is empty the content seems to be:
@@ -96,6 +96,15 @@ export default class OldEditor extends Component {
 				event.preventDefault();
 				event.stopImmediatePropagation();
 			}
+
+			const { altKey } = event;
+			/*
+			 * Prevent Mousetrap from kicking in: TinyMCE already uses its own
+			 * `alt+f10` shortcut to focus its toolbar.
+			 */
+			if ( altKey && event.keyCode === F10 ) {
+				event.stopPropagation();
+			}
 		} );
 
 		editor.addButton( 'kitchensink', {
@@ -111,9 +120,19 @@ export default class OldEditor extends Component {
 		} );
 	}
 
+	onToolbarKeyDown( event ) {
+		// Prevent WritingFlow from kicking in and allow arrows navigation on the toolbar.
+		event.stopPropagation();
+		// Prevent Mousetrap to move focus to the top toolbar when pressing `alt+f10` on this block toolbar.
+		event.nativeEvent.stopImmediatePropagation();
+	}
+
 	render() {
 		const { isSelected, id } = this.props;
 
+		// Disable reason: the toolbar itself is non-interactive, but must capture
+		// events from the KeyboardShortcuts component to stop their propagation.
+		/* eslint-disable jsx-a11y/no-static-element-interactions */
 		return [
 			<div
 				key="toolbar"
@@ -121,6 +140,7 @@ export default class OldEditor extends Component {
 				ref={ ref => this.ref = ref }
 				className="freeform-toolbar"
 				style={ ! isSelected ? { display: 'none' } : {} }
+				onKeyDown={ this.onToolbarKeyDown }
 			/>,
 			<div
 				key="editor"
@@ -128,5 +148,6 @@ export default class OldEditor extends Component {
 				className="wp-block-freeform blocks-rich-text__tinymce"
 			/>,
 		];
+		/* eslint-enable jsx-a11y/no-static-element-interactions */
 	}
 }
