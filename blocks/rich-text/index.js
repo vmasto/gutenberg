@@ -518,6 +518,10 @@ export class RichText extends Component {
 				if ( event.shiftKey || ! this.props.onSplit ) {
 					this.editor.execCommand( 'InsertLineBreak', false, event );
 				} else {
+					// Splitting the content might destroy the editor, so it's
+					// important that we stop other handlers (e.g. ones
+					// registered by TinyMCE) from also handling this event.
+					event.stopImmediatePropagation();
 					this.splitContent();
 				}
 			}
