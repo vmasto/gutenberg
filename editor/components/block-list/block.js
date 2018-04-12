@@ -641,6 +641,7 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps ) => {
 		replaceBlocks,
 		editPost,
 		toggleSelection,
+		moveBlockToPosition,
 	} = dispatch( 'core/editor' );
 	return {
 		onChange( uid, attributes ) {
@@ -663,8 +664,7 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps ) => {
 				isUnmodifiedDefaultBlock( first( blocks ) ) &&
 				isUnmodifiedDefaultBlock( block )
 			) {
-				removeBlock( block.uid );
-				insertBlocks( blocks, orderOfRoot + 1, rootUIDOfRoot );
+				moveBlockToPosition( block.uid, rootUID, rootUIDOfRoot, layout, orderOfRoot + 1 );
 			} else {
 				insertBlocks( blocks, order + 1, rootUID );
 			}
