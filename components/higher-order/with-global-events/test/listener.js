@@ -70,5 +70,18 @@ describe( 'Listener', () => {
 
 			expect( handler.handleEvent ).toHaveBeenCalledWith( event );
 		} );
+
+		it( 'calls all added handlers', () => {
+			const handler = createHandler();
+			listener.add( 'resize', handler );
+			listener.add( 'resize', handler );
+			listener.add( 'resize', handler );
+
+			const event = { type: 'resize' };
+
+			listener.handleEvent( event );
+
+			expect( handler.handleEvent ).toHaveBeenCalledTimes( 3 );
+		} );
 	} );
 } );
